@@ -1,23 +1,56 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include "variadic_functions.h"
+
 /**
- * print_c - print character
- * @print: argument
+ * t_char - print a character
+ *@va:character
+ *
+ * Return: no return
  */
-void print_c(va_list print)
+void t_char(va_list va)
 {
-	printf("%c", va_arg(print, int));
+	int c;
+
+	c = va_arg(va, int);
+	printf("%c", c);
+}
+
+/**
+ * t_integer - print an integer
+ *@va:number 1
+ *
+ * Return: no return
+ */
+void t_integer(va_list va)
+{
+	printf("%d", va_arg(va, int));
+}
+
+/**
+ * t_float - print a float
+ *@va:float number
+ *
+ * Return: no return
+ */
+void t_float(va_list va)
+{
+	double c;
+
+	c = va_arg(va, double);
+	printf("%f", c);
 }
 /**
- * print_s - print string
- * @print: argument
+ * t_string - print a string
+ *@va: pointer to string
+ *
+ * Return: no return
  */
-void print_s(va_list print)
+void t_string(va_list va)
 {
-	char *s;
+	char *s = va_arg(va, char *);
 
-	s = va_arg(print, char*);
 	if (s == NULL)
 	{
 		printf("(nil)");
@@ -25,62 +58,46 @@ void print_s(va_list print)
 	}
 	printf("%s", s);
 }
+
+
 /**
- * print_fl - print floats
- * @print: argument
- */
-void print_fl(va_list print)
-{
-	printf("%f", va_arg(print, double));
-}
-/**
- * print_i - print integers
- * @print: argument
- */
-void print_i(va_list print)
-{
-	printf("%d", va_arg(print, int));
-}
-/**
- * print_all - print anything
- * @format: type of format
- */
+* print_all - prints anything
+*@format: format
+*
+* Return: no return
+*/
 void print_all(const char * const format, ...)
 {
-	int i, j, k;
-	va_list print;
-	print_f pp[] = {
-		{"c", print_c},
-		{"i", print_i},
-		{"s", print_s},
-		{"f", print_fl},
-	};
+	int i, j, count;
+	va_list valist;
+	types difftypes[] = {
+		{'c', t_char},
+		{'i', t_integer},
+		{'f', t_float},
+		{'s', t_string},
+		};
+	char *s = "";
 
-	va_start(print, format);
 	i = 0;
-	k = 0;
+	count = 0;
+	va_start(valist, format);
 	while (format != NULL && format[i])
 	{
 		j = 0;
 		while (j < 4)
 		{
-			if (format[i] == pp[j].c[0])
+			if (format[i] == difftypes[j].t)
 			{
-				switch (k)
-				{
-					case 0:
-						break;
-					default:
-						printf(", ");
-				}
-				pp[j].f(print);
-				k++;
+				printf("%s", s);
+				difftypes[j].f(valist);
+				s = ", ";
+				count++;
 				break;
 			}
 			j++;
+
 		}
 		i++;
 	}
 	printf("\n");
-	va_end(print);
 }
